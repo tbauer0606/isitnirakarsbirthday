@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Is It Nirakar's Birthday?</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background-color: #ff7a00; /* bright orange */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #answer {
+      color: #000;
+      font-size: 20vw;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      z-index: 2;
+      user-select: none;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="answer">NO</div>
+  <canvas id="confetti"></canvas>
+
+  <script>
+    const today = new Date();
+    const month = today.getMonth(); // 0 = January
+    const day = today.getDate();
+    const answerEl = document.getElementById("answer");
+
+    const isBirthday = (month === 4 && day === 10);
+
+    if (isBirthday) {
+      answerEl.textContent = "YES";
+      startConfetti();
+    } else {
+      answerEl.textContent = "NO";
+    }
+
+    function startConfetti() {
+      const canvas = document.getElementById("confetti");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const confettiCount = 200;
+      const confetti = [];
+
+      const colors = [
+        "#000000",
+        "#ffffff",
+        "#ff0000",
+        "#00ffcc",
+        "#ffff00"
+      ];
+
+      for (let i = 0; i < confettiCount; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 8 + 4,
+          speed: Math.random() * 3 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        confetti.forEach(p => {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation * Math.PI / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+
+          p.y += p.speed;
+          p.rotation += p.speed;
+
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+        });
+
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+    }
+
+    window.addEventListener("resize", () => {
+      const canvas = document.getElementById("confetti");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
